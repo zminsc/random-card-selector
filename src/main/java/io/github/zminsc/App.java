@@ -8,28 +8,21 @@ public class App implements Runnable {
 
     private Deck currentDeck = new Deck();
 
-    private Card currentCard;
+    private final CardPile cardPile = new CardPile();
 
     private final JLabel deckLabel = new JLabel(currentDeck.toImageIcon());
 
-    private final JLabel cardLabel = new JLabel();
+    private final JLabel cardPileLabel = new JLabel();
 
-    private void changeCard(Card newCard) {
-        currentCard = newCard;
-
-        if (newCard == null) {
-            cardLabel.setIcon(null);
-        } else {
-            cardLabel.setIcon(newCard.toImageIcon());
-        }
-
-        cardLabel.repaint();
+    private void updateCardPileIcon() {
+        cardPileLabel.setIcon(cardPile.toImageIcon());
+        cardPileLabel.repaint();
         frame.pack();
     }
 
     private void putBackInDeck(Deck.Location location) {
-        currentDeck.putCard(location, currentCard);
-        changeCard(null);
+        currentDeck.putCard(location, cardPile.pop());
+        updateCardPileIcon();
     }
 
     private JPanel makeDeckControls() {
@@ -51,15 +44,25 @@ public class App implements Runnable {
 
         shuffle.addActionListener(e -> currentDeck.shuffle());
 
-        selectTop.addActionListener(e -> changeCard(currentDeck.selectCard(Deck.Location.TOP)));
+        selectTop.addActionListener(e -> {
+            cardPile.add(currentDeck.selectCard(Deck.Location.TOP));
+            updateCardPileIcon();
+        });
 
-        selectBottom.addActionListener(e -> changeCard(currentDeck.selectCard(Deck.Location.BOTTOM)));
+        selectBottom.addActionListener(e -> {
+            cardPile.add(currentDeck.selectCard(Deck.Location.BOTTOM));
+            updateCardPileIcon();
+        });
 
-        selectRandom.addActionListener(e -> changeCard(currentDeck.selectCard(Deck.Location.RANDOM)));
+        selectRandom.addActionListener(e -> {
+            cardPile.add(currentDeck.selectCard(Deck.Location.RANDOM));
+            updateCardPileIcon();
+        });
 
         reset.addActionListener(e -> {
-            changeCard(null);
             currentDeck = new Deck();
+            cardPile.clear();
+            updateCardPileIcon();
         });
 
         return deckControls;
@@ -103,7 +106,7 @@ public class App implements Runnable {
         deckArea.add(deckLabel);
 
         final JPanel cardArea = new JPanel();
-        cardArea.add(cardLabel);
+        cardArea.add(cardPileLabel);
 
         final JPanel selectionArea = new JPanel();
         selectionArea.setLayout(new GridBagLayout());
