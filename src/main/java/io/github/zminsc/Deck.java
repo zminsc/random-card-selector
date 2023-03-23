@@ -98,4 +98,8 @@ public class Deck {
         }
     }
 
+    public boolean containsCard(Card card) {
+        return cards.contains(card);
+    }
+
 }

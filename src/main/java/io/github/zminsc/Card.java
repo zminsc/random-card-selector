@@ -36,11 +36,19 @@ public class Card {
         }
     }
 
+    public Rank getRank() {
+        return rank;
+    }
+
+    public Suit getSuit() {
+        return suit;
+    }
+
     public ImageIcon toImageIcon() {
         return new ImageIcon(cardIcon);
     }
 
-    private String toImageURL() {
+    public String toImageURL() {
         String rankStr, suitStr;
 
         switch (rank) {
@@ -173,5 +181,19 @@ public class Card {
         }
 
         return rankStr + " of " + suitStr;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+
+        if (other.getClass() == this.getClass()) {
+            Card otherCard = (Card) other;
+            return otherCard.getRank() == this.getRank() && otherCard.getSuit() == this.getSuit();
+        }
+
+        return false;
     }
 }
