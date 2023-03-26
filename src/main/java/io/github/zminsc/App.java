@@ -90,11 +90,54 @@ public class App implements Runnable {
         return cardControls;
     }
 
+    private JPanel makeThemeControls() {
+        final JPanel themeControls = new JPanel();
+        themeControls.setLayout(new GridLayout(0, 1));
+
+        final JButton changeTheme = new JButton("Change theme");
+
+        themeControls.add(new JLabel("Theme"));
+        themeControls.add(changeTheme);
+
+        changeTheme.addActionListener(e -> {
+            Object[] themeNames = {"Blue", "Red"};
+
+            String s = (String) JOptionPane.showInputDialog(frame,
+                    "Pick a theme:",
+                    "Change Theme",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    themeNames,
+                    "Blue"
+            );
+
+            if ((s != null) && s.length() > 0) {
+                switch (s) {
+                    case "Blue":
+                        currentDeck.setTheme(Deck.Theme.BLUE);
+                        break;
+                    case "Red":
+                        currentDeck.setTheme(Deck.Theme.RED);
+                        break;
+                    default:
+                        break;
+                }
+
+                deckLabel.setIcon(currentDeck.toImageIcon());
+                deckLabel.repaint();
+                frame.pack();
+            }
+        });
+
+        return themeControls;
+    }
+
     public void run() {
         frame.setLayout(new BorderLayout());
 
         final JPanel deckControls = makeDeckControls();
         final JPanel cardControls = makeCardControls();
+        final JPanel themeControls = makeThemeControls();
 
         final JPanel controls = new JPanel();
         controls.setLayout(new GridLayout(0, 1));
@@ -116,6 +159,7 @@ public class App implements Runnable {
 
         frame.add(controls, BorderLayout.LINE_START);
         frame.add(selectionArea, BorderLayout.CENTER);
+        frame.add(themeControls, BorderLayout.LINE_END);
 
         frame.pack();
         frame.setLocation(0, 0);

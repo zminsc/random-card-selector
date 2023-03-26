@@ -10,10 +10,15 @@ import java.util.Collections;
 import java.util.Objects;
 
 public class Deck {
+    public enum Location {TOP, BOTTOM, RANDOM}
+
+    public enum Theme {RED, BLUE}
+
     private final ArrayList<Card> cards;
+
     private BufferedImage deckIcon;
 
-    public enum Location {TOP, BOTTOM, RANDOM}
+    private Theme theme = Theme.BLUE;
 
     public Deck() {
         cards = new ArrayList<>();
@@ -24,9 +29,18 @@ public class Deck {
             }
         }
 
+        updateDeckIcon();
+    }
+
+    public ImageIcon toImageIcon() {
+        return new ImageIcon(deckIcon);
+    }
+
+    public void updateDeckIcon() {
         try {
             deckIcon = ImageIO.read(Objects.requireNonNull(
-                    this.getClass().getClassLoader().getResourceAsStream("back-blue.png"))
+                    this.getClass().getClassLoader()
+                            .getResourceAsStream(themeToImageURL(theme)))
             );
 
             int w = deckIcon.getWidth() * 5;
@@ -41,10 +55,6 @@ public class Deck {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public ImageIcon toImageIcon() {
-        return new ImageIcon(deckIcon);
     }
 
     public void shuffle() {
@@ -102,4 +112,19 @@ public class Deck {
         return cards.contains(card);
     }
 
+    public void setTheme(Theme theme) {
+        this.theme = theme;
+        updateDeckIcon();
+    }
+
+    public static String themeToImageURL(Theme theme) {
+        switch (theme) {
+            case RED:
+                return "back-red.png";
+            case BLUE:
+                return "back-blue.png";
+            default:
+                return null;
+        }
+    }
 }
